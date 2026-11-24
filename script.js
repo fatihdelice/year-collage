@@ -3,8 +3,10 @@ const canvas = $('canvas'), ctx = canvas.getContext('2d');
 const translations = {
     tr: {
         title: '1 Yıl Kolajı',
+        pageTitle: '1 Yıl Kolajı – Yıl Dönümü Fotoğraf Kolajı Oluşturucu',
+        description: '36 fotoğrafa kadar ekleyerek ilk yıl dönümünüz için bir kolaj hazırlayın. Posterinizi özelleştirin ve 2400 × 3000 PNG olarak indirin. Fotoğraflar cihazınızda kalır.',
         language: 'Dil',
-        intro: 'Birlikte geçirdiğiniz anıları tek bir posterde birleştirin.',
+        intro: 'Birlikte geçirdiğiniz ilk yılı 36 fotoğrafa kadar ekleyebileceğiniz bir yıl dönümü kolajına dönüştürün.',
         drop: 'Fotoğrafları sürükleyin veya seçin',
         headingLabel: 'Dikey yazı',
         subtitleLabel: 'Alt yazı',
@@ -26,8 +28,10 @@ const translations = {
     },
     en: {
         title: '1 Year Collage',
+        pageTitle: '1 Year Collage – Anniversary Photo Collage Maker',
+        description: 'Create a first anniversary photo collage with up to 36 photos. Customize your poster and download a 2400 × 3000 PNG. Photos stay on your device.',
         language: 'Language',
-        intro: 'Bring your shared memories together in a single poster.',
+        intro: 'Turn your first year together into an anniversary photo collage with up to 36 photos.',
         drop: 'Drag photos here or choose files',
         headingLabel: 'Vertical text',
         subtitleLabel: 'Subtitle',
@@ -61,7 +65,8 @@ function setLanguage(nextLanguage) {
     language = nextLanguage;
     $('language').value = language;
     document.documentElement.lang = language;
-    document.title = current.title;
+    document.title = current.pageTitle;
+    document.querySelector('meta[name="description"]').content = current.description;
     $('language').setAttribute('aria-label', current.language);
     document.querySelectorAll('[data-i18n]').forEach(element => {
         element.textContent = current[element.dataset.i18n];

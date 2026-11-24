@@ -66,12 +66,21 @@ label {
 }
 
 input:not([type=checkbox]),
+#year,
 button {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font: inherit
+}
+
+#year {
+    appearance: none;
+    padding-right: 32px;
+    margin-bottom: 16px;
+    color: inherit;
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23242424' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center / 12px;
 }
 
 input[type=color] {

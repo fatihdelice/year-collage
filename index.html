@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>1 Year Collage – Anniversary Photo Collage Maker</title>
-    <meta name="description" content="Create a first anniversary photo collage with up to 36 photos. Customize your poster and download a 2400 × 3000 PNG. Photos stay on your device.">
+    <title>Anniversary Collage – Photo Collage Maker</title>
+    <meta name="description" content="Create a photo collage for your 1st through 9th anniversary and download a 2400 × 3000 PNG. Photos stay on your device.">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="1 Year Collage">
-    <meta property="og:title" content="1 Year Collage – Anniversary Photo Collage Maker">
-    <meta property="og:description" content="Create a first anniversary photo collage with up to 36 photos. Customize your poster and download a 2400 × 3000 PNG. Photos stay on your device.">
+    <meta property="og:site_name" content="Anniversary Collage">
+    <meta property="og:title" content="Anniversary Collage – Photo Collage Maker">
+    <meta property="og:description" content="Create a photo collage for your 1st through 9th anniversary and download a 2400 × 3000 PNG. Photos stay on your device.">
     <meta name="twitter:card" content="summary">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&display=swap">
@@ -20,13 +20,25 @@
     <main>
         <aside>
             <div class="panel-header">
-                <h1 data-i18n="title">1 Year Collage</h1>
+                <h1 data-i18n="title">Anniversary Collage</h1>
                 <select id="language" aria-label="Language">
                     <option value="tr" lang="tr">Türkçe</option>
                     <option value="en" lang="en" selected>English</option>
                 </select>
             </div>
-            <p data-i18n="intro">Turn your first year together into an anniversary photo collage with up to 36 photos.</p>
+            <p data-i18n="intro">Choose an anniversary year and add your photos to fill its number.</p>
+            <label for="year" data-i18n="yearLabel">Anniversary year</label>
+            <select id="year" aria-describedby="count">
+                <option value="1">1st year</option>
+                <option value="2">2nd year</option>
+                <option value="3">3rd year</option>
+                <option value="4">4th year</option>
+                <option value="5">5th year</option>
+                <option value="6">6th year</option>
+                <option value="7">7th year</option>
+                <option value="8">8th year</option>
+                <option value="9">9th year</option>
+            </select>
             <div id="drop" tabindex="0" role="button">
                 <span data-i18n="drop">Drag photos here or choose files</span>
                 <input id="files" type="file" accept="image/*" multiple hidden>

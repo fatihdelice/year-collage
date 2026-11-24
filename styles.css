@@ -1,0 +1,139 @@
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    background: #f1f0ed;
+    color: #242424;
+    font: 15px system-ui, sans-serif
+}
+
+main {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px
+}
+
+aside,
+section {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 4px 24px #00000008
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px
+}
+
+#language {
+    flex-shrink: 0;
+    margin-left: auto;
+    padding: 6px 4px 6px 29px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath fill='%23e30a17' d='M0 0h24v16H0z'/%3E%3Ccircle fill='white' cx='10' cy='8' r='4.5'/%3E%3Ccircle fill='%23e30a17' cx='11.2' cy='8' r='3.6'/%3E%3Cpath fill='white' d='m13 8 5-1.6-3.1 4.2V5.4L18 9.6z'/%3E%3C/svg%3E") no-repeat 6px center / 18px;
+    color: inherit;
+    font: inherit;
+    font-size: 13px
+}
+
+html[lang="en"] #language {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath fill='%23012169' d='M0 0h24v16H0z'/%3E%3Cpath stroke='white' stroke-width='3' d='m0 0 24 16m0-16L0 16'/%3E%3Cpath stroke='%23c8102e' d='m0 0 24 16m0-16L0 16'/%3E%3Cpath stroke='white' stroke-width='5' d='M12 0v16M0 8h24'/%3E%3Cpath stroke='%23c8102e' stroke-width='3' d='M12 0v16M0 8h24'/%3E%3C/svg%3E")
+}
+
+p {
+    color: #666;
+    line-height: 1.5
+}
+
+label {
+    display: block;
+    margin: 16px 0 6px;
+    font-weight: 600
+}
+
+input:not([type=checkbox]),
+button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font: inherit
+}
+
+input[type=color] {
+    height: 42px;
+    padding: 4px
+}
+
+button {
+    cursor: pointer;
+    background: white;
+    margin-top: 10px
+}
+
+button.primary {
+    background: #222;
+    color: white;
+    border: 0;
+    padding: 14px
+}
+
+button:disabled {
+    opacity: .4;
+    cursor: default
+}
+
+#drop {
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    padding: 24px 12px;
+    text-align: center;
+    cursor: pointer
+}
+
+#drop.over {
+    background: #eee
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 2px 15px #0002
+}
+
+section {
+    align-self: start
+}
+
+small {
+    color: #777
+}
+
+#count {
+    display: block;
+    margin-top: 10px
+}
+
+@media(max-width:720px) {
+    main {
+        grid-template-columns: 1fr;
+        margin: 0;
+        padding: 12px;
+        gap: 12px
+    }
+}

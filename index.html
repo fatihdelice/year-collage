@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>1 Yıl Kolajı</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&display=swap">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <main>
+        <aside>
+            <div class="panel-header">
+                <h1 data-i18n="title">1 Year Collage</h1>
+                <select id="language" aria-label="Language">
+                    <option value="tr" lang="tr">Türkçe</option>
+                    <option value="en" lang="en" selected>English</option>
+                </select>
+            </div>
+            <p data-i18n="intro">Bring your shared memories together in a single poster.</p>
+            <div id="drop" tabindex="0" role="button">
+                <span data-i18n="drop">Drag photos here or choose files</span>
+                <input id="files" type="file" accept="image/*" multiple hidden>
+            </div>
+            <small id="count" aria-live="polite"></small>
+            <label for="heading" data-i18n="headingLabel">Vertical text</label>
+            <input id="heading" value="YEAR" maxlength="8">
+            <label for="subtitle" data-i18n="subtitleLabel">Subtitle</label>
+            <input id="subtitle" value="with you" maxlength="24">
+            <label for="bg" data-i18n="background">Background</label>
+            <input id="bg" type="color" value="#ffffff">
+            <label for="gap" data-i18n="gap">Photo spacing</label>
+            <input id="gap" type="range" min="0" max="20" value="8">
+            <label><input id="gray" type="checkbox"> <span data-i18n="grayscale">Black and white</span></label>
+            <button id="shuffle" data-i18n="shuffle">Shuffle photos</button>
+            <button id="clear" data-i18n="clear">Clear photos</button>
+            <button id="download" class="primary" data-i18n="download" disabled>Download image (PNG)</button>
+            <p><small data-i18n="footer">2400 × 3000 px. Photos are processed on your device.</small></p>
+        </aside>
+        <section><canvas id="canvas" width="2400" height="3000"></canvas></section>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>

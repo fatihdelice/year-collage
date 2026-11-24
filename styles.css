@@ -120,6 +120,52 @@ section {
     align-self: start
 }
 
+#poster {
+    position: relative
+}
+
+.photo-tile {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent
+}
+
+.photo-tile:hover,
+.photo-tile:focus-visible {
+    outline: 2px solid white;
+    box-shadow: 0 0 0 4px #222;
+    z-index: 1
+}
+
+#crop-editor {
+    width: min(360px, calc(100% - 32px));
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    color: inherit
+}
+
+#crop-editor::backdrop {
+    background: #0008
+}
+
+#crop-title {
+    margin: 0 0 12px;
+    font-size: 20px
+}
+
+#crop-preview {
+    width: auto;
+    max-width: 100%;
+    max-height: 32vh;
+    margin: auto;
+    touch-action: pan-y;
+    cursor: grab
+}
+
 small {
     color: #777
 }

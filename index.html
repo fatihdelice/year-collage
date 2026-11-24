@@ -46,8 +46,24 @@
             <button id="download" class="primary" data-i18n="download" disabled>Download image (PNG)</button>
             <p><small data-i18n="footer">2400 × 3000 px. Photos are processed on your device.</small></p>
         </aside>
-        <section><canvas id="canvas" width="2400" height="3000"></canvas></section>
+        <section>
+            <div id="poster">
+                <canvas id="canvas" width="2400" height="3000"></canvas>
+            </div>
+        </section>
     </main>
+    <dialog id="crop-editor" aria-labelledby="crop-title">
+        <h2 id="crop-title" data-i18n="editPhoto">Edit photo</h2>
+        <canvas id="crop-preview"></canvas>
+        <label for="crop-zoom" data-i18n="zoom">Zoom</label>
+        <input id="crop-zoom" type="range" min="1" max="4" step="0.01" value="1">
+        <label for="crop-pan" data-i18n="horizontalPosition">Horizontal position</label>
+        <input id="crop-pan" type="range" min="-100" max="100" value="0">
+        <button id="crop-reset" type="button" data-i18n="resetCrop">Reset</button>
+        <form method="dialog">
+            <button class="primary" data-i18n="done">Done</button>
+        </form>
+    </dialog>
     <script src="script.js"></script>
 </body>
 

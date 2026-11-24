@@ -2,6 +2,12 @@ const $ = id => document.getElementById(id);
 const canvas = $('canvas'), ctx = canvas.getContext('2d');
 const translations = {
     tr: {
+        editPhoto: 'Fotoğrafı düzenle',
+        photoTile: number => `${number}. fotoğrafı düzenle`,
+        zoom: 'Yakınlaştırma',
+        horizontalPosition: 'Sağa sola kaydır',
+        resetCrop: 'Sıfırla',
+        done: 'Tamam',
         title: '1 Yıl Kolajı',
         pageTitle: '1 Yıl Kolajı – Yıl Dönümü Fotoğraf Kolajı Oluşturucu',
         description: '36 fotoğrafa kadar ekleyerek ilk yıl dönümünüz için bir kolaj hazırlayın. Posterinizi özelleştirin ve 2400 × 3000 PNG olarak indirin. Fotoğraflar cihazınızda kalır.',
@@ -27,6 +33,12 @@ const translations = {
         filename: '1-yil-kolaji.png'
     },
     en: {
+        editPhoto: 'Edit photo',
+        photoTile: number => `Edit photo ${number}`,
+        zoom: 'Zoom',
+        horizontalPosition: 'Horizontal position',
+        resetCrop: 'Reset',
+        done: 'Done',
         title: '1 Year Collage',
         pageTitle: '1 Year Collage – Anniversary Photo Collage Maker',
         description: 'Create a first anniversary photo collage with up to 36 photos. Customize your poster and download a 2400 × 3000 PNG. Photos stay on your device.',
@@ -83,10 +95,121 @@ const tiles = [
     [0, 12, 1, 1], [1, 12, 1, 1], [2, 12, 2, 2], [4, 12, 1, 1], [5, 12, 1, 1], [6, 12, 2, 2], [8, 12, 1, 2],
     [0, 13, 2, 2], [4, 13, 2, 2], [2, 14, 1, 1], [3, 14, 1, 1], [6, 14, 1, 1], [7, 14, 1, 1], [8, 14, 1, 1]
 ];
-function cover(img, x, y, w, h) {const s = Math.max(w / img.naturalWidth, h / img.naturalHeight); const sw = w / s, sh = h / s; ctx.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, x, y, w, h);}
+const editor = $('crop-editor');
+const preview = $('crop-preview');
+const previewContext = preview.getContext('2d');
+const defaultCrop = { zoom: 1, pan: 0 };
+const crops = new Map();
+let editedTile;
+
+const tileButtons = tiles.map((_, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'photo-tile';
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.onclick = () => {
+        editedTile = index;
+        renderCropPreview();
+        editor.showModal();
+    };
+    $('poster').append(button);
+    return button;
+});
+
+function tileBounds([column, row, width, height], gap) {
+    return [400 + column * 176 + gap / 2, 180 + row * 176 + gap / 2,
+        width * 176 - gap, height * 176 - gap];
+}
+
+function cover(context, img, x, y, width, height, { zoom, pan }) {
+    const scale = Math.max(width / img.naturalWidth, height / img.naturalHeight) * zoom;
+    const sourceWidth = width / scale;
+    const sourceHeight = height / scale;
+    const horizontalRoom = Math.max(0, img.naturalWidth - sourceWidth);
+    context.filter = $('gray').checked ? 'grayscale(100%)' : 'none';
+    context.drawImage(img, horizontalRoom * (1 - pan) / 2,
+        Math.max(0, img.naturalHeight - sourceHeight) / 2,
+        sourceWidth, sourceHeight, x, y, width, height);
+}
+
+function renderCropPreview() {
+    const [, , width, height] = tileBounds(tiles[editedTile], Number($('gap').value) * 2);
+    const photo = photos[editedTile % photos.length];
+    const crop = crops.get(editedTile) ?? defaultCrop;
+    preview.width = width;
+    preview.height = height;
+    $('crop-zoom').value = crop.zoom;
+    $('crop-pan').value = crop.pan * 100;
+    $('crop-pan').disabled = crop.zoom === 1 &&
+        photo.naturalWidth * height <= photo.naturalHeight * width;
+    cover(previewContext, photo, 0, 0, width, height, crop);
+}
+
+function updateCrop() {
+    crops.set(editedTile, {
+        zoom: Number($('crop-zoom').value),
+        pan: Number($('crop-pan').value) / 100
+    });
+    renderCropPreview();
+    render();
+}
+
+$('crop-zoom').oninput = updateCrop;
+$('crop-pan').oninput = updateCrop;
+let panDrag;
+preview.onpointerdown = event => {
+    if (event.button !== 0 || $('crop-pan').disabled) return;
+    const photo = photos[editedTile % photos.length];
+    const crop = crops.get(editedTile) ?? defaultCrop;
+    const scale = Math.max(preview.width / photo.naturalWidth,
+        preview.height / photo.naturalHeight) * crop.zoom;
+    const travel = (photo.naturalWidth * scale / preview.width - 1) *
+        preview.getBoundingClientRect().width;
+    if (travel <= 0) return;
+    panDrag = { x: event.clientX, pan: crop.pan, travel };
+    preview.setPointerCapture(event.pointerId);
+};
+preview.onpointermove = event => {
+    if (!panDrag || !preview.hasPointerCapture(event.pointerId)) return;
+    const pan = panDrag.pan + 2 * (event.clientX - panDrag.x) / panDrag.travel;
+    $('crop-pan').value = Math.round(100 * Math.max(-1, Math.min(1, pan)));
+    updateCrop();
+};
+preview.onlostpointercapture = () => { panDrag = undefined; };
+$('crop-reset').onclick = () => {
+    crops.delete(editedTile);
+    renderCropPreview();
+    render();
+};
+
 function render() {
     const bg = $('bg').value; ctx.fillStyle = bg; ctx.fillRect(0, 0, 2400, 3000); const unit = 176, ox = 400, oy = 180, g = Number($('gap').value) * 2; const dark = parseInt(bg.slice(1, 3), 16) * .299 + parseInt(bg.slice(3, 5), 16) * .587 + parseInt(bg.slice(5, 7), 16) * .114 < 128;
-    tiles.forEach(([c, r, w, h], i) => {const x = ox + c * unit + g / 2, y = oy + r * unit + g / 2, tw = w * unit - g, th = h * unit - g; if (photos.length) {ctx.save(); ctx.filter = $('gray').checked ? 'grayscale(100%)' : 'none'; cover(photos[i % photos.length], x, y, tw, th); ctx.restore();} else {ctx.fillStyle = dark ? '#555' : '#e8e6e3'; ctx.fillRect(x, y, tw, th); ctx.fillStyle = dark ? '#ddd' : '#aaa'; ctx.font = '32px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(i + 1, x + tw / 2, y + th / 2);} });
+    tiles.forEach((tile, index) => {
+        const [x, y, width, height] = tileBounds(tile, g);
+        const button = tileButtons[index];
+        button.hidden = !photos.length;
+        button.setAttribute('aria-label', translations[language].photoTile(index + 1));
+        Object.assign(button.style, {
+            left: `${100 * x / canvas.width}%`,
+            top: `${100 * y / canvas.height}%`,
+            width: `${100 * width / canvas.width}%`,
+            height: `${100 * height / canvas.height}%`
+        });
+        if (photos.length) {
+            ctx.save();
+            cover(ctx, photos[index % photos.length], x, y, width, height,
+                crops.get(index) ?? defaultCrop);
+            ctx.restore();
+        } else {
+            ctx.fillStyle = dark ? '#555' : '#e8e6e3';
+            ctx.fillRect(x, y, width, height);
+            ctx.fillStyle = dark ? '#ddd' : '#aaa';
+            ctx.font = '32px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(index + 1, x + width / 2, y + height / 2);
+        }
+    });
     ctx.fillStyle = dark ? '#fff' : '#171717'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '900 180px Arial,sans-serif'; const chars = Array.from($('heading').value.toLocaleUpperCase(language)); const step = Math.min(350, 1250 / Math.max(1, chars.length)); chars.forEach((ch, i) => ctx.fillText(ch, ox + 6.85 * unit, oy + 3.1 * unit + i * step)); ctx.textAlign = 'left'; ctx.font = subtitleFont; ctx.fillText($('subtitle').value, ox + 6.25 * unit, oy + 10.85 * unit, 540);
     $('download').disabled = !photos.length;
     const copy = translations[language];
@@ -99,5 +222,7 @@ async function load(list) {const results = await Promise.allSettled(Array.from(l
 $('drop').onclick = () => $('files').click(); $('files').onclick = e => e.stopPropagation(); $('drop').onkeydown = e => {if (e.key === 'Enter' || e.key === ' ') {e.preventDefault(); $('files').click();} }; $('files').onchange = async e => {await load(e.target.files); e.target.value = '';}; $('drop').ondragover = e => {e.preventDefault(); $('drop').classList.add('over')}; $('drop').ondragleave = () => $('drop').classList.remove('over'); $('drop').ondrop = e => {e.preventDefault(); $('drop').classList.remove('over'); load(e.dataTransfer.files)};
 ['heading', 'subtitle', 'bg', 'gap', 'gray'].forEach(id => $(id).addEventListener('input', render)); $('shuffle').onclick = () => {for (let i = photos.length - 1; i > 0; i--) {const j = Math.floor(Math.random() * (i + 1));[photos[i], photos[j]] = [photos[j], photos[i]];} render();}; $('clear').onclick = () => {photos = []; render()}; $('download').onclick = async () => {await subtitleReady; render(); canvas.toBlob(blob => {if (!blob) return; const url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = translations[language].filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);}, 'image/png')};
 $('language').onchange = event => setLanguage(event.target.value);
+$('shuffle').addEventListener('click', () => crops.clear(), { capture: true });
+$('clear').addEventListener('click', () => crops.clear(), { capture: true });
 setLanguage(language);
 subtitleReady.then(render);
